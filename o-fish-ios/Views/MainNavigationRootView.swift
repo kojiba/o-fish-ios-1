@@ -13,8 +13,8 @@ struct MainNavigationRootView: View {
     @State private var isLoggedIn = RealmConnection.loggedIn
 
     var body: some View {
-        NavigationView {
-            if isLoggedIn {
+        NavigationCustomView {
+            if self.isLoggedIn {
                 PatrolBoatView(isLoggedIn: self.$isLoggedIn)
             } else {
                 LoginView(loggedIn: self.$isLoggedIn)

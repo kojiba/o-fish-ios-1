@@ -67,11 +67,12 @@ struct LoginView: View {
         }
             .padding(.top, Dimensions.topPadding)
             .padding(.horizontal, Dimensions.padding)
-            .navigationBarBackButtonHidden(true)
+            .navigationBarView(title: "Login")
+//            .navigationBarBackButtonHidden(true)
             // TODO: These are needed to clear the bar after logging out – check
             // if there's a cleaner approach
-            .navigationBarItems(leading: EmptyView(), trailing: EmptyView())
-            .navigationBarTitle(Text("Login"), displayMode: .inline)
+//            .navigationBarItems(leading: EmptyView(), trailing: EmptyView())
+//            .navigationBarTitle(Text("Login"), displayMode: .inline)
             .alert(isPresented: Binding<Bool>(
                 get: { return !self.errorMessage.isEmpty },
                 set: { _ in })) {
