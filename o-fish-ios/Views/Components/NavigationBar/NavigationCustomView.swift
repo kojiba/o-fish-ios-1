@@ -18,14 +18,17 @@ struct NavigationCustomView<Content>: View where Content: View {
     var content: () -> Content
 
     var body: some View {
-        VStack(spacing: .zero) {
-            NavigationBarView(title: title,
-                backgroundColor: backgroundColor,
-                separatorColor: separatorColor,
-                separatorHeight: separatorHeight,
-                barHeight: barHeight)
+        GeometryReader { geometry in
 
-            content()
+            VStack(spacing: .zero) {
+                NavigationBarView(title: self.title,
+                    backgroundColor: self.backgroundColor,
+                    separatorColor: self.separatorColor,
+                    separatorHeight: self.separatorHeight,
+                    topSpacer: geometry.safeAreaInsets.top)
+                self.content()
+            }
+                .edgesIgnoringSafeArea(.all)
         }
     }
 }

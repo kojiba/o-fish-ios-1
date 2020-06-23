@@ -29,8 +29,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             window.tintColor = .main
 
             window.rootViewController = UIHostingController(rootView: rootView
-                .navigationBarTitle("")
-                .navigationBarHidden(true)
+//                .navigationBarTitle("")
+//                .navigationBarHidden(true)
                 .environmentObject(self.settings)
                 .environmentObject(self.locationHelper)
                 .environmentObject(self.imageCache)

@@ -15,25 +15,27 @@ struct NavigationBarView: View {
     var separatorColor = Color.inactiveBar
 
     var separatorHeight: CGFloat = 0.5
-    var barHeight: CGFloat = 64
+    var barHeight: CGFloat = 44
+    var topSpacer: CGFloat = 0
 
     var body: some View {
-
         VStack(spacing: .zero) {
-            Spacer(minLength: .zero)
+            Spacer(minLength: topSpacer)
 
-            HStack {
-
-                Text(title)
+            VStack {
+                Spacer(minLength: .zero)
+                HStack {
+                    Text(title)
+                        .font(Font.body.weight(.semibold))
+                }
+                Spacer(minLength: .zero)
             }
-
-            Spacer(minLength: .zero)
 
             separatorColor
                 .frame(height: separatorHeight)
         }
             .background(backgroundColor)
-            .frame(height: barHeight)
+            .frame(height: barHeight + topSpacer)
     }
 }
 

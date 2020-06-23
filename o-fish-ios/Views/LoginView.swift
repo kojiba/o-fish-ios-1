@@ -25,14 +25,17 @@ struct LoginView: View {
     }
 
     var body: some View {
-        VStack {
+        Group {
             if showingLoading {
                 LoadingIndicatorView(isAnimating: $showingLoading,
                                      style: .large)
+                    .padding(.top, Dimensions.topPadding)
+
             } else {
                 KeyboardControllingScrollView {
-                    Group {
+                    VStack(spacing: Dimensions.padding) {
                         Image("ofish-blue")
+                            .padding(.top, Dimensions.topPadding)
 
                         ZStack(alignment: .trailing) {
                             InputField(title: "Email/Username",
@@ -63,11 +66,10 @@ struct LoginView: View {
                             .opacity(0) // TODO remove after implementing
                     }
                 }
+                    .padding(.horizontal, Dimensions.padding)
             }
         }
-            .padding(.top, Dimensions.topPadding)
-            .padding(.horizontal, Dimensions.padding)
-            .navigationBarView(title: "Login")
+//            .navigationBarView(title: "Login")
 //            .navigationBarBackButtonHidden(true)
             // TODO: These are needed to clear the bar after logging out – check
             // if there's a cleaner approach
