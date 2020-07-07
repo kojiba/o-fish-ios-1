@@ -16,9 +16,14 @@ struct ReportNavigationRootView: View {
     @State private var showingAlertItem: AlertItem?
     @State private var notFilledScreens: [String] = TopTabBarItems.allCases.map { $0.rawValue }
 
-    init(report: ReportViewModel?, prefilledVesselAvailable: Bool = false) {
+    init(report: ReportViewModel? = nil, prefilledVesselAvailable: Bool = false) {
         self.report = report ?? ReportViewModel()
         self.prefilledVesselAvailable = prefilledVesselAvailable
+        if let menuData = RealmConnection.realm?.objects(MenuData.self).first {
+            Settings.shared.menuData = menuData
+        } else {
+            print("Failed to read menus")
+        }
     }
 
     var body: some View {

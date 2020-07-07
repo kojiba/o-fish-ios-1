@@ -25,76 +25,85 @@ struct LoginView: View {
     }
 
     var body: some View {
-        VStack {
+        Group {
             if showingLoading {
                 LoadingIndicatorView(isAnimating: $showingLoading,
-                                     style: .large)
-            } else {
-                KeyboardControllingScrollView {
-                    Group {
-                        Image("ofish-blue")
+                    style: .large)
+                    .padding(.top, Dimensions.topPadding)
 
-                        ZStack(alignment: .trailing) {
-                            InputField(title: "Email/Username",
-                                text: self.$username)
-                            //TODO need to implement Face id
-                            Button(action: { print("Face id") }) {
-                                Image(systemName: "faceid")
+            } else {
+                VStack(spacing: .zero) {
+                    Color.inactiveBar.frame(height: 0.5)
+
+                    KeyboardControllingScrollView {
+                        VStack(spacing: Dimensions.padding) {
+                            Image("ofish-blue")
+                                .padding(.top, Dimensions.topPadding)
+
+                            ZStack(alignment: .trailing) {
+                                InputField(title: "Email/Username",
+                                    text: self.$username)
+                                    .keyboardType(.emailAddress)
+
+                                //TODO need to implement Face id
+                                Button(action: { print("Face id") }) {
+                                    Image(systemName: "faceid")
+                                        .foregroundColor(.removeAction)
+                                }
+                                    .opacity(0) // TODO remove after implementing
+                            }
+                                .padding(.top, Dimensions.topInputFieldPadding)
+                                .padding(.bottom, Dimensions.padding)
+
+                            InputField(title: "Password",
+                                text: self.$password,
+                                showingSecureField: true)
+
+                            CallToActionButton(title: "Log In",
+                                action: self.login)
+                                .opacity(self.username.isEmpty || self.password.isEmpty ? 0.5 : 1.0)
+                                .padding(.top, Dimensions.topInputFieldPadding)
+                                .padding(.bottom, Dimensions.buttonPadding)
+
+                            //TODO need to implement Forgot password
+                            Button(action: { print("Forgot password") }) {
+                                Text("Forgot Password?")
                                     .foregroundColor(.removeAction)
                             }
                                 .opacity(0) // TODO remove after implementing
                         }
-                            .padding(.top, Dimensions.topInputFieldPadding)
-
-                        InputField(title: "Password",
-                            text: self.$password,
-                            showingSecureField: true)
-
-                        CallToActionButton(title: "Log In",
-                            action: self.login)
-                            .opacity(self.username.isEmpty || self.password.isEmpty ? 0.5 : 1.0)
-                            .padding(.top, Dimensions.topInputFieldPadding)
-                            .padding(.bottom, Dimensions.buttonPadding)
-                        //TODO need to implement Forgot password
-                        Button(action: { print("Forgot password") }) {
-                            Text("Forgot Password?")
-                                .foregroundColor(.removeAction)
-                        }
-                            .opacity(0) // TODO remove after implementing
                     }
+                        .padding(.horizontal, Dimensions.padding)
                 }
             }
         }
-            .padding(.top, Dimensions.topPadding)
-            .padding(.horizontal, Dimensions.padding)
             .navigationBarBackButtonHidden(true)
             // TODO: These are needed to clear the bar after logging out – check
             // if there's a cleaner approach
             .navigationBarItems(leading: EmptyView(), trailing: EmptyView())
             .navigationBarTitle(Text("Login"), displayMode: .inline)
             .alert(isPresented: Binding<Bool>(
-                get: { return !self.errorMessage.isEmpty },
+                get: { !self.errorMessage.isEmpty },
                 set: { _ in })) {
-                Alert(title: Text("Error"),
-                      message: Text(errorMessage),
-                      dismissButton: .default(Text("Ok")) {
-                    self.errorMessage = ""
-                    self.password = ""
+                Alert(title: Text("Login Error"),
+                    message: Text(errorMessage),
+                    dismissButton: .default(Text("Ok")) {
+                        self.errorMessage = ""
+                        self.password = ""
                     })
-        }
+            }
     }
 
     private func login() {
         if username.isEmpty || password.isEmpty {
-            errorMessage = "Please write email and password"
             return
         }
         showingLoading = true
         RealmConnection.logIn( username: username, password: password) { result in
             self.showingLoading = false
             switch result {
-            case .failure(let error):
-                self.errorMessage = error.localizedDescription
+            case .failure:
+                self.errorMessage = "Invalid email or password"
             case .success:
                 print("Logged in")
                 self.loggedIn.wrappedValue = true

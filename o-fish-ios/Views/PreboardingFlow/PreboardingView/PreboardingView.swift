@@ -71,6 +71,8 @@ struct PreboardingView: View {
 
     private enum Dimension {
         static let topPadding: CGFloat = 20.0
+        static let noSpacing: CGFloat = 0.0
+        static let padding: CGFloat = 16.0
     }
 
     private enum States {
@@ -80,24 +82,38 @@ struct PreboardingView: View {
     var body: some View {
 
         VStack {
-            SearchBarView(searchText: Binding<String>(
-                get: { self.searchText },
-                set: { self.searchText = $0
-                    if !$0.isEmpty {
-                        self.state = .loading
-                        let debounceHandler: () -> Void = {
-                            self.loadReports(with: self.searchText)
-                        }
-                        self.searchDebouncer.invalidate()
-                        self.searchDebouncer.handler = debounceHandler
-                        self.searchDebouncer.call()
+            SearchBarView(
+                searchText: Binding<String>(
+                    get: { self.searchText },
+                    set: { self.searchText = $0
+                        if !$0.isEmpty {
+                            self.state = .loading
+                            let debounceHandler: () -> Void = {
+                                self.loadReports(with: self.searchText)
+                            }
+                            self.searchDebouncer.invalidate()
+                            self.searchDebouncer.handler = debounceHandler
+                            self.searchDebouncer.call()
 
-                    } else {
-                        self.storedReports = []
-                        self.state = .loaded
+                        } else {
+                            self.storedReports = []
+                            self.state = .loaded
+                        }
+                }),
+                placeholder: searchbarPlaceholder
+            )
+
+            if showingAddVessel {
+                NavigationLink(destination: ReportNavigationRootView()) {
+                    VStack(spacing: Dimension.noSpacing) {
+                        IconLabel(imagePath: "plus", title: "Add New Vessel")
+                            .padding(.vertical, Dimension.padding)
+                        Divider()
                     }
-            }),
-                          placeholder: searchbarPlaceholder)
+                    Spacer()
+                }
+                    .opacity(state == .loading ? 0.0 : 1.0)
+            }
 
             stateView()
             Spacer()
@@ -171,17 +187,19 @@ struct PreboardingView: View {
         switch state {
 
         case .loaded:
-            return AnyView(LoadedStateView(onDuty: onDuty,
-                                           storedReports: $storedReports,
-                                           showingRecentBoardings: $showingRecentBoardings,
-                                           showingAddVessel: showingAddVessel))
+            return AnyView(LoadedStateView(
+                onDuty: onDuty,
+                storedReports: $storedReports,
+                showingRecentBoardings: $showingRecentBoardings)
+            )
 
         case .loading:
-            return AnyView(ActivityIndicator(isAnimating: Binding<Bool>(
-                get: { self.state == .loading },
-                set: { _ in }
+            return AnyView(ActivityIndicator(
+                isAnimating: Binding<Bool>(
+                    get: { self.state == .loading },
+                    set: { _ in }
                 ),
-                                             style: .medium)
+                style: .medium)
                     .padding(.top, Dimension.topPadding))
 
         case .empty:

@@ -17,9 +17,10 @@ struct BoardingRecordView: View {
     }
 
     var body: some View {
+        VStack(spacing: .zero) {
+            Color.inactiveBar.frame(height: 0.5)
             ScrollView {
                 VStack(spacing: Dimensions.spacing) {
-
                     InspectionSummaryView(report: report)
                         .background(Color.white)
                         .compositingGroup()
@@ -41,8 +42,8 @@ struct BoardingRecordView: View {
                     if !report.captain.isEmpty {
                         wrappedShadowView {
                             CrewMemberStaticView(crewMember: report.captain,
-                                                 isCaptain: true,
-                                                 isEditable: false)
+                                isCaptain: true,
+                                isEditable: false)
                         }
                     }
                     if !report.crew.isEmpty {
@@ -70,12 +71,15 @@ struct BoardingRecordView: View {
                     }
                 }
             }
-                .navigationBarTitle("Boarding", displayMode: .inline)
-                .navigationBarBackButtonHidden(true)
-                .navigationBarItems(
-                    leading: Button(action: { self.presentationMode.wrappedValue.dismiss() }) { BackButton(label: "\(report.vessel.name)") })
-                .padding(.top)
         }
+            .background(Color.backgroundGrey)
+            .edgesIgnoringSafeArea(.bottom)
+            .navigationBarTitle("Boarding", displayMode: .inline)
+            .navigationBarBackButtonHidden(true)
+            .navigationBarItems(leading: Button(action: { self.presentationMode.wrappedValue.dismiss() }) {
+                BackButton(label: "\(report.vessel.name)")
+            })
+    }
 }
 
 struct BoardingRecordView_Previews: PreviewProvider {

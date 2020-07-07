@@ -16,18 +16,14 @@ struct PhotoThumbNail: View {
 
     private enum Dimensions {
         static let radius: CGFloat = 4
-        static let iconPadding: CGFloat = 12
+        static let iconPadding: CGFloat = 8
     }
 
     var body: some View {
         ZStack {
             Button(action: { self.displayPhoto?(self.photo) }) {
-                if photo.thumbNail != nil {
-                    Image(uiImage: photo.thumbNail!)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                } else if photo.picture != nil {
-                    Image(uiImage: photo.picture!)
+                if photo.thumbNail != nil || photo.picture != nil {
+                    Image(uiImage: photo.thumbNail ?? photo.picture ?? UIImage())
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                 } else if photo.pictureURL != "" {
@@ -59,7 +55,9 @@ struct PhotoThumbNail: View {
 
 struct PhotoThumbNail_Previews: PreviewProvider {
     static var previews: some View {
-        PhotoThumbNail(photo: .sample)
+        func dummyFunc (_: PhotoViewModel) { }
+        return PhotoThumbNail(photo: .sample, deletePhoto: dummyFunc(_:))
             .environmentObject(ImageCache())
+            .background(Color.black)
     }
 }
